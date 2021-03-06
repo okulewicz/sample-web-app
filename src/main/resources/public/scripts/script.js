@@ -1,12 +1,14 @@
 `use strict;`
 
 const poiFormId = 'new-poi-form';
+let map;
 
 document.addEventListener('DOMContentLoaded', initializeApplication, false);
 
 function initializeApplication() {
     let form = document.getElementById(poiFormId);
     form.onsubmit = handleNewPOI;
+    loadMap();
 }
 
 function handleNewPOI() {
@@ -57,6 +59,21 @@ function handleNewPOI() {
         }
     }
 }
+
+function loadMap() {
+    //add map and set its center to specific location
+    map = L.map('map-panel').setView([52.05, 20.00], 6);
+    //add OSM as background layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">' +
+            'OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+        maxZoom: 19,
+        id: 'osm.tiles'
+    }).addTo(map);
+
+}
+
 
 
 

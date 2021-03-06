@@ -1,6 +1,19 @@
+.general-grid {
+    display: grid;
+    grid-template-rows: 1fr fit-content(10ch);
+    row-gap: 1em;
+    position: absolute;
+    top: 0;
+    bottom: 1em;
+    left: 0;
+    right: 0;
+
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: 45% 45%;
+    justify-content: space-evenly;
 }
 
 .grid-item-two-column {
