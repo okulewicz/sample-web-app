@@ -1,0 +1,18 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: 45% 45%;
+}
+
+.grid-item-two-column {
+    grid-column: 1 / span 2;
+}
+
+.no-such-place-error-inactive {
+    display: none;
+}
+
+.no-such-place-error-active {
+    border: 1px solid darkred;
+    background-color: lightpink;
+    text-align: center;
+}

@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Point of interest manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="scripts/script.js"></script>
 </head>
 <body>
-
+    <div id="new-poi-panel">
+        <form id="new-poi-form">
+        <div id="new-poi-form--container" class="form-grid">
+            <label for="input-country">Country</label><input id="input-country" name="country" placeholder="Poland" />
+            <label for="input-city">City</label><input  id="input-city" name="city" placeholder="Warszawa" />
+            <label for="input-zipcode">Zipcode</label><input  id="input-zipcode" name="zipcode" placeholder="00-661"/>
+            <label for="input-street">Street</label><input  id="input-street" name="street" placeholder="Plac Politechniki" />
+            <label for="input-house">House number</label><input  id="input-house" name="house" placeholder="1" />
+            <button class="grid-item-two-column">Place POI</button>
+            <div class="no-such-place-error-inactive grid-item-two-column">No such place</div>
+        </div>
+        </form>
+    </div>
 </body>
 </html>
