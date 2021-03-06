@@ -47,8 +47,12 @@ function handleNewPOI() {
 
     function showLocation(data) {
         if (data.length > 0) {
-            console.info(data[0]["lat"]);
-            console.info(data[0]["lon"]);
+            let lat = data[0]["lat"];
+            console.info(lat);
+            let lng = data[0]["lon"];
+            console.info(lng);
+            let marker = L.marker([lat, lng]);
+            marker.addTo(map);
         } else {
             let errorElements = form.getElementsByClassName('no-such-place-error-inactive');
             for (let i = 0; i < errorElements.length; ++i) {

@@ -12,8 +12,11 @@
 
 .form-grid {
     display: grid;
-    grid-template-columns: 45% 45%;
-    justify-content: space-evenly;
+    grid-template-columns: fit-content(10em) fit-content(5em);
+    row-gap: 0.5em;
+    column-gap: 0.5em;
+    justify-content: center;
+    align-items: center;
 }
 
 .grid-item-two-column {
