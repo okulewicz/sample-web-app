@@ -30,6 +30,5 @@ public class POIController {
         } else {
             return HttpResponse.unprocessableEntity();
         }
-
     }
 }
