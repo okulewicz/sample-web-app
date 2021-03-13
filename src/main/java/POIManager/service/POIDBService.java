@@ -16,7 +16,6 @@ import java.util.List;
 @Singleton
 @DefaultImplementation
 public class POIDBService implements POIService {
-    Gson gson = new Gson();
     public static final String CREATE_DB_SQL = "CREATE TABLE IF NOT EXISTS public.poi (" +
             "    id serial NOT NULL PRIMARY KEY," +
             "    country varchar NOT NULL," +
@@ -28,10 +27,10 @@ public class POIDBService implements POIService {
             ");";
 
     public static final String INSERT_POI_SQL = "INSERT INTO public.poi (country, city, zipcode, street, house, geom)" +
-            " VALUES (?, ?, ?, ?, ?, ST_GeomFromGeoJSON(?) ) RETURNING id;";
+            " VALUES (?, ?, ?, ?, ?, ST_Point(?, ?) ) RETURNING id;";
 
     public static final String SELECT_POI_SQL = "SELECT country, city, zipcode, street, house," +
-            " ST_AsGeoJSON(geom) as geom FROM public.poi;";
+            " ST_X(geom) as lon, ST_Y(geom) as lat  FROM public.poi;";
 
     private final DBConnector connector;
 
@@ -41,7 +40,8 @@ public class POIDBService implements POIService {
 
     @PostConstruct
     public void initializeDB() {
-        try (Connection conn = connector.getConnection()) {
+        try {
+            Connection conn = connector.getConnection();
             PreparedStatement ps = conn.prepareStatement(CREATE_DB_SQL);
             ps.execute();
         } catch (SQLException ex) {
@@ -52,7 +52,8 @@ public class POIDBService implements POIService {
     @Override
     public List<POI> getPOIs() {
         List<POI> pois = new ArrayList<>();
-        try (Connection conn = connector.getConnection()) {
+        try {
+            Connection conn = connector.getConnection();
             PreparedStatement ps = conn.prepareStatement(SELECT_POI_SQL);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -62,7 +63,8 @@ public class POIDBService implements POIService {
                 poi.setZipcode(rs.getString("zipcode"));
                 poi.setStreet(rs.getString("street"));
                 poi.setHouse(rs.getString("house"));
-                poi.setGeom(gson.toJsonTree(rs.getString("geom")));
+                poi.setLat(rs.getDouble("lat"));
+                poi.setLon(rs.getDouble("lon"));
             }
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
@@ -72,14 +74,16 @@ public class POIDBService implements POIService {
 
     @Override
     public POI addPoi(POI poi) {
-        try (Connection conn = connector.getConnection()) {
+        try {
+            Connection conn = connector.getConnection();
             PreparedStatement ps = conn.prepareStatement(INSERT_POI_SQL);
             ps.setString(1, poi.getCountry());
             ps.setString(2, poi.getCity());
             ps.setString(3, poi.getZipcode());
             ps.setString(4, poi.getStreet());
             ps.setString(5, poi.getHouse());
-            ps.setString(6, gson.toJson(poi.getGeom()));
+            ps.setDouble(6, poi.getLon());
+            ps.setDouble(7, poi.getLat());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 poi.setId(rs.getInt("id"));

@@ -7,7 +7,8 @@ public class POI {
     private String zipcode;
     private String street;
     private String house;
-    private Object geom;
+    private double lat;
+    private double lon;
 
     public int getId() {
         return id;
@@ -57,11 +58,19 @@ public class POI {
         this.house = house;
     }
 
-    public Object getGeom() {
-        return geom;
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 
-    public void setGeom(Object geom) {
-        this.geom = geom;
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
     }
 }
