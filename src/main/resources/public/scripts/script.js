@@ -11,6 +11,20 @@ function initializeApplication() {
     loadMap();
 }
 
+function getPostPOIfunction(poi) {
+    return function (data) {
+        poi.lat = data[0]["lat"];
+        poi.lon = data[0]["lon"];
+        fetch('/poi', {
+            method: 'POST',
+            body: JSON.stringify(poi),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    };
+}
+
 function handleNewPOI() {
     let form = this;
 
@@ -20,6 +34,7 @@ function handleNewPOI() {
     console.info(this.zipcode.value);
     console.info(this.street.value);
     console.info(this.house.value);
+    let poi = this;
     let response = fetch('https://nominatim.openstreetmap.org/search' +
         '?street=' + this.house.value.trim() + ' ' + this.street.value.trim() +
         '&city=' + this.city.value.trim() +
@@ -27,13 +42,14 @@ function handleNewPOI() {
         '&postalcode=' + this.zipcode.value.trim() +
         '&format=json')
     ;
-    response
+    let jsonResponse = response
         .then(r => {
             if (r.ok) {
                 return r.json();
             }
-        })
-        .then(showLocation);
+        });
+    jsonResponse.then(showLocation);
+    jsonResponse.then(getPostPOIfunction(poi));
     return false;
 
     function clearErrors() {
