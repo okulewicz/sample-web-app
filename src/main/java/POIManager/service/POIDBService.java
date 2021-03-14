@@ -27,10 +27,10 @@ public class POIDBService implements POIService {
             ");";
 
     public static final String INSERT_POI_SQL = "INSERT INTO public.poi (country, city, zipcode, street, house, geom)" +
-            " VALUES (?, ?, ?, ?, ?, ST_Point(?, ?) ) RETURNING id;";
+            " VALUES (?, ?, ?, ?, ?, ST_SetSRID(ST_Point(?, ?), 4326)) RETURNING id;";
 
-    public static final String SELECT_POI_SQL = "SELECT country, city, zipcode, street, house," +
-            " ST_X(geom) as lon, ST_Y(geom) as lat  FROM public.poi;";
+    public static final String SELECT_POI_SQL = "SELECT id, country, city, zipcode, street, house," +
+            " ST_X(geom) as lon, ST_Y(geom) as lat FROM public.poi;";
 
     private final DBConnector connector;
 
@@ -58,6 +58,7 @@ public class POIDBService implements POIService {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 POI poi = new POI();
+                poi.setId(rs.getInt("id"));
                 poi.setCountry(rs.getString("country"));
                 poi.setCity(rs.getString("city"));
                 poi.setZipcode(rs.getString("zipcode"));
@@ -65,6 +66,7 @@ public class POIDBService implements POIService {
                 poi.setHouse(rs.getString("house"));
                 poi.setLat(rs.getDouble("lat"));
                 poi.setLon(rs.getDouble("lon"));
+                pois.add(poi);
             }
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);

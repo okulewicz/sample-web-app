@@ -21,20 +21,34 @@ function getPostPOIfunction(poi) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
+        }).then(r => r.json())
+            .then(placeMarker);
     };
+}
+
+function placeMarker(datum) {
+    let lat = datum["lat"];
+    let lng = datum["lon"];
+    let marker = L.marker([lat, lng]);
+    marker.addTo(map);
+    let message = '<h1>' + datum['city'] + '</h1>'
+        + '<p>' + (datum['zipcode'] != null ? datum['zipcode'] : '00-000') +
+        (datum['street'] != null ? (', ' +  datum['street']) : '') +
+        (datum['house'] != null ? (' ' + datum['house']) : '') + '</p>';
+    marker.bindPopup(message);
+    console.info(message);
 }
 
 function handleNewPOI() {
     let form = this;
+    let poi = {};
 
     clearErrors();
-    console.info(this.country.value);
-    console.info(this.city.value);
-    console.info(this.zipcode.value);
-    console.info(this.street.value);
-    console.info(this.house.value);
-    let poi = this;
+    poi.country = this.country.value;
+    poi.city = this.city.value;
+    poi.zipcode = this.zipcode.value;
+    poi.street = this.street.value;
+    poi.house = this.house.value;
     let response = fetch('https://nominatim.openstreetmap.org/search' +
         '?street=' + this.house.value.trim() + ' ' + this.street.value.trim() +
         '&city=' + this.city.value.trim() +
@@ -48,7 +62,7 @@ function handleNewPOI() {
                 return r.json();
             }
         });
-    jsonResponse.then(showLocation);
+    jsonResponse.then(checkIfSomeObjects);
     jsonResponse.then(getPostPOIfunction(poi));
     return false;
 
@@ -61,15 +75,8 @@ function handleNewPOI() {
         }
     }
 
-    function showLocation(data) {
-        if (data.length > 0) {
-            let lat = data[0]["lat"];
-            console.info(lat);
-            let lng = data[0]["lon"];
-            console.info(lng);
-            let marker = L.marker([lat, lng]);
-            marker.addTo(map);
-        } else {
+    function checkIfSomeObjects(data) {
+        if (data.length === 0) {
             let errorElements = form.getElementsByClassName('no-such-place-error-inactive');
             for (let i = 0; i < errorElements.length; ++i) {
                 let errorElement = errorElements[i];
@@ -92,6 +99,13 @@ function loadMap() {
         id: 'osm.tiles'
     }).addTo(map);
 
+    fetch('/poi')
+        .then(r => r.json())
+        .then(function (data) {
+            for (let i = 0; i < data.length; ++i) {
+                placeMarker(data[i]);
+            }
+        })
 }
 
 
